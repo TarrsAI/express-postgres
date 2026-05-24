@@ -27,7 +27,7 @@ Tarrs auto-injects:
 - `DATABASE_URL` — points at the local Postgres sidecar inside the sandbox
 - `JWT_SECRET` — generated per-project, stored in Sandbox Secrets
 
-Sandbox runs on port 3000 (default Tarrs ALB target). Public URL is
+Sandbox runs on port 4000 (Tarrs convention for Express backends; frontend is :3000, Python/agent is :8080). Public URL is
 `<project-slug>.dev.tarrs.io`; Caddy in the sandbox routes `/api/*`
 straight at this container.
 
@@ -52,17 +52,17 @@ pnpm install
 cp .env.example .env
 # fill DATABASE_URL + JWT_SECRET
 pnpm db:migrate    # apply drizzle/migrations to the DB at DATABASE_URL
-pnpm dev           # tsx watch, port 3000
+pnpm dev           # tsx watch, port 4000
 ```
 
 Try the auth flow:
 
 ```bash
-curl -i -c jar.txt -X POST http://localhost:3000/api/auth/register \
+curl -i -c jar.txt -X POST http://localhost:4000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"a@b.com","password":"correctbatteryhorse"}'
 
-curl -b jar.txt http://localhost:3000/api/auth/me
+curl -b jar.txt http://localhost:4000/api/auth/me
 ```
 
 ## Schema changes
@@ -79,7 +79,7 @@ pnpm db:migrate
 ## Deploy to prod
 
 The Tarrs sandbox handles deploy for you — `pnpm db:migrate` runs
-inside the container at boot, the dev server starts on `:3000`,
+inside the container at boot, the dev server starts on `:4000`,
 Caddy + ALB do the rest. If you migrate off Tarrs to Fly / Render,
 the same `pnpm build && node .dist/index.js` works given a real
 `DATABASE_URL`.
