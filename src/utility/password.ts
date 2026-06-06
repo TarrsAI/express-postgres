@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 // 10 rounds = ~80ms on modern hardware. Bumping it linearly increases
 // the per-login cost; 10 is the bcrypt default and a reasonable

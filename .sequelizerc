@@ -1,0 +1,12 @@
+'use strict';
+
+const path = require('path');
+
+// sequelize-cli is CommonJS and loads its config + migrations from
+// these paths. Migrations live in raw SQL-shaped JS so the AI editing
+// them can paste DDL straight in without any model awareness.
+module.exports = {
+  config: path.resolve('src/db/config.cjs'),
+  'migrations-path': path.resolve('migrations'),
+  'seeders-path': path.resolve('seeders'),
+};

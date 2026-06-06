@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import { SESSION_COOKIE_NAME, verifySession } from '../utility/jwt.js';
+import { httpErr } from '../utility/httpErr.js';
+import { HTTP_STATUS_CODE } from '../utility/httpStatusCode.js';
 
 // Augment the Express Request shape so handlers can read req.user
-// after loadSession has populated it. Using the global Express
-// namespace works regardless of which @types/express version pulls
-// in `express-serve-static-core` indirectly.
+// after loadSession has populated it.
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
@@ -23,7 +23,7 @@ export const loadSession = async (
   req: Request,
   _res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   const token =
     (req.cookies as Record<string, string> | undefined)?.[SESSION_COOKIE_NAME];
   if (!token) {
@@ -43,11 +43,15 @@ export const loadSession = async (
  */
 export const requireAuth = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
-) => {
+): void => {
   if (!req.user) {
-    res.status(401).json({ error: 'Sign in required' });
+    next(
+      httpErr('Sign in required', HTTP_STATUS_CODE.UNAUTHORIZED, {
+        code: 'ERR_AUTH_REQUIRED',
+      }),
+    );
     return;
   }
   next();
