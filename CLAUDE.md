@@ -8,9 +8,9 @@ Deviating is a bug.
 
 | Concern | Choice | Don't substitute |
 |---|---|---|
-| Data access | **Sequelize 6** | No Drizzle / Prisma / TypeORM / raw `pg` queries in routes. The ORM is Sequelize because it's what this template + the matching frontend templates (`nextjs-postgres`) use. Pick one stack, stick with it. |
+| Data access | **Sequelize 6** | No Drizzle / Prisma / TypeORM / raw `pg` queries in routes. Sequelize is what this template ships with — pair with `nextjs-standalone` (thin client over HTTP) for the frontend. Pick one stack, stick with it. |
 | Authorization | **In code, in `src/service/`** | Every protected operation checks `if (resource.ownerId !== actingUserId) throw httpErr('Not found', 404)` in the service layer. The controller never does this check — it's a property of the resource, not of the HTTP transport. |
-| Auth (sessions) | bcrypt + jose HS256, httpOnly cookie | Don't swap to JWT in localStorage / Authorization header. Don't switch to `jsonwebtoken` — `jose` matches our edge-runtime use cases in `nextjs-postgres`. |
+| Auth (sessions) | bcrypt + jose HS256, httpOnly cookie | Don't swap to JWT in localStorage / Authorization header. Don't switch to `jsonwebtoken` — `jose` works in both Node + edge runtimes if you ever consolidate auth across services. |
 | Migrations | **`sequelize-cli` migrations under `migrations/`** | No `sequelize.sync()`. Ever. Migrations are the only source of truth for schema. |
 | Validation | Zod | No yup / joi / class-validator. |
 | Response shape | `response(res, statusCode, message, data, debug?, code?)` from `src/utility/response.ts` | Every endpoint returns `{ success, message, data, debug?, code? }`. No bare `res.json(...)` or `res.status(...).send(...)`. |
