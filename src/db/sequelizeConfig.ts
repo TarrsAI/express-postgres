@@ -27,7 +27,20 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL ?? '', {
   dialectOptions: {
     statement_timeout: 30_000,
     idle_in_transaction_session_timeout: 60_000,
-    ...(useSsl ? { ssl: { require: true, rejectUnauthorized: false } } : {}),
+    // DATABASE_SSL is set precisely BECAUSE the link is untrusted —
+    // managed Postgres over the public internet. `rejectUnauthorized:
+    // false` then turns TLS on and declines to check who is on the other
+    // end, which is the one thing it was turned on for. Verify by
+    // default; DATABASE_SSL_INSECURE=1 is an explicit, named opt-out for
+    // a local self-signed setup.
+    ...(useSsl
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: process.env.DATABASE_SSL_INSECURE !== '1',
+          },
+        }
+      : {}),
   },
 });
 

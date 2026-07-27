@@ -11,8 +11,16 @@
 require('dotenv').config();
 
 const useSsl = process.env.DATABASE_SSL === '1';
+// See src/db/sequelizeConfig.ts — same reasoning. This CommonJS copy is
+// what the MIGRATION path loads, so leaving it unverified would mean
+// every schema change still ran over an unauthenticated connection.
 const dialectOptions = useSsl
-  ? { ssl: { require: true, rejectUnauthorized: false } }
+  ? {
+      ssl: {
+        require: true,
+        rejectUnauthorized: process.env.DATABASE_SSL_INSECURE !== '1',
+      },
+    }
   : {};
 
 const base = {

@@ -51,14 +51,14 @@ Tarrs auto-injects:
 - `JWT_SECRET` — generated per-project, stored in Sandbox Secrets
 
 Sandbox runs on port 4000 (Tarrs convention: frontend :3000, backend
-:4000, Python/agent :8080). Public URL is `<project-slug>.dev.tarrs.io`;
+:4000, Python/agent :8080). Public URL is `<project-slug>.dev.tarrsapp.io`;
 Caddy in the sandbox routes `/api/*` straight at this container.
 
 ## Cookie + CORS recipe (frontend on a different domain)
 
 The default `COOKIE_SAMESITE=lax` works when the frontend and API live
 on the same eTLD+1 (e.g. both under `*.example.com`). For a frontend
-on Vercel calling this API on `*.dev.tarrs.io`:
+on Vercel calling this API on `*.dev.tarrsapp.io`:
 
 ```
 COOKIE_SAMESITE=none      # required for cross-site cookie
